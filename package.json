@@ -1,0 +1,28 @@
+{
+  "name": "asset-tool",
+  "version": "1.0.0",
+  "description": "Tool to help calculate and view a breakdown of daily, monthly, and annual finances",
+  "main": "asset.js",
+  "scripts": {
+    "start": "node ./example.js"
+  },
+  "author": "Evan Bonsignori",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "html-pdf": "^2.2.0",
+    "opn": "^5.4.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ebonsignori/asset-tool.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Ebonsignori/asset-tool/issues"
+  },
+  "homepage": "https://github.com/Ebonsignori/asset-tool#readme",
+  "keywords": [
+    "Finance Management"
+  ]
+}

@@ -1,0 +1,49 @@
+.gain {
+  background-color: rgb(0, 255, 0, .1);
+  color: black;
+}
+.badge-gain {
+  background-color: green;
+  color: white;
+}
+
+.loss {
+  background-color: rgb(255, 0, 0, .1);
+  color: black;
+}
+.badge-loss {
+  background-color: red;
+  color: white;
+}
+
+.remaining {
+  background-color: rgb(255, 255, 0, .1);
+  color: black;
+}
+.badge-remaining {
+  background-color: gold;
+  color: white;
+}
+
+.income {
+  background-color: rgb(0, 255, 0, .1);
+  color: black;
+}
+.badge-income {
+  background-color: green;
+  color: white;
+}
+
+.expense {
+  background-color: rgb(255, 0, 0, .1);
+  color: black;
+}
+
+.badge-expense {
+  background-color: red;
+  color: white;
+}
+
+.col-md-4 {
+  border: 1px solid black;
+}
