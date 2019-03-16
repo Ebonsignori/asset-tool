@@ -4,7 +4,11 @@ const generateHTML = require('./html-generator')
 let includedAssets = []
 
 class Asset {
-  constructor (amount, { type, interval, label } = { type: null, interval: Asset.TYPE.TOTAL, label: '***No Label***' }, isCents) {
+  constructor (amount, { type, interval, label } = { type: 'expense', interval: 'monthly', label: 'Unlabelled' }, isCents) {
+    if (!type) type = 'expense'
+    if (!interval) interval = 'monthly'
+    if (!label) label = 'Unlabelled'
+
     // Unique Asset identifier
     this.isAsset = true
 
@@ -18,10 +22,10 @@ class Asset {
     }
 
     // - - - Validate args - - -
-    if (typeof amount !== 'number') throw TypeError('amount must be a number')
-    if (!Object.values(Asset.TYPE).includes(type)) throw TypeError('invalid type of asset')
-    if (interval && !Object.values(Asset.INT).includes(interval)) throw TypeError('invalid interval of asset')
-    if (typeof label !== 'string') throw TypeError('label must be a string')
+    if (typeof amount !== 'number') throw TypeError('Amount must be included as a single number or as an array of numbers to be averaged.')
+    if (type && !Object.values(Asset.TYPE).includes(type)) throw TypeError('invalid type of asset.')
+    if (interval && !Object.values(Asset.INT).includes(interval)) throw TypeError('invalid interval of asset.')
+    if (label && typeof label !== 'string') throw TypeError('label must be a string.')
 
     // By default, expect amount to be in dollars
     if (isCents) this.amount = amount

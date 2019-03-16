@@ -1,4 +1,6 @@
-# Asset Tool
+# Asset tool
+
+**NOTE:** Only USD currently supported
 
 This tool is geared for personal use and is not recommended / robust enough to be used in a production environment.
 
@@ -18,19 +20,17 @@ The following is an image of the html summary generated from running [example.js
 
 ### Install
 
-`npm i -s asset-tool`
+`npm i -s Asset-tool`
 
 Import the module
 
-`const Asset = require('asset-tool')`
+`const Asset = require('Asset-tool')`
 
 ### QuickStart
 
 Simply use [example.js](./example.js) as a template, or read on from here to learn how to setup the tool from the ground up.
 
-### Build your finances
-
-Construct your assets
+### Declare your assets
 
 `Asset.construct(amount, type, interval, label)`
 
@@ -39,14 +39,43 @@ Construct your assets
 - `type`: Can be a value from `Asset.TYPE` (see [Static Values](#static-values))
 - `interval`: Can be a value from `Asset.INT` (see [Static Values](#static-values))
 - `label`: A string identifying the asset (e.g. 'Rent')
+- `isCents`: defaults to `false`, if set to `true`, amount will be in cents.
 
-Example:
+Example
+
+```javascript
+Asset.construct(100000, Asset.TYPE.INCOME, Asset.INT.ANNUAL, 'Tech Company')
+```
+
+Example of average amounts
 
 ```javascript
 Asset.construct([65, 100], Asset.TYPE.EXPENSE, Asset.INT.MONTHLY, 'Internet')
 ```
 
-#### Include in calculations
+Example when an `amount` of $19.99 is specified in cents
+
+```javascript
+Asset.construct(1999, Asset.TYPE.EXPENSE, Asset.INT.MONTHLY, '3 payments of', true)
+```
+
+### Declare using default constructor
+
+`new Asset(amount, {type: '', interval: '', label: ''}, isCents`
+
+- `amount`: A number value in dollars of the amount of the asset.
+  - Can be an array of numbers that will be averaged. (e.g. `[200, 400]` will be averaged to `300`)
+  - Always Required
+- `type`: Can be a value from `Asset.TYPE` (see [Static Values](#static-values))
+  - Optional. Defaults to `Asset.TYPE.EXPENSE`
+- `interval`: Can be a value from `Asset.INT` (see [Static Values](#static-values))
+  - Optional. Defaults to `Asset.INT.MONTHLY`
+- `label`: A string identifying the asset (e.g. 'Rent')
+  - Optional. Defaults to `Unlabelled`
+- `isCents`: defaults to `false`, if set to `true`, amount will be in cents.
+  - Optional. Defaults to `false` (dollars)
+
+### Include an Asset in calculations
 
 `include()` each asset that you want to participate in final calculations. If you create assets and manipulate them with calculations, then you only want to `include()` the final asset. 
 
@@ -145,3 +174,8 @@ Asset.INT = {
   ANNUAL: 'annual'
 }
 ```
+
+## TODO
+
+- Add tests
+- Make more robust / less hacky

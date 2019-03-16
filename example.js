@@ -1,4 +1,5 @@
-const Asset = require('./asset')
+const Asset = require('.') // IMPORTANT: If using this as a template, comment this out
+// const Asset = require('Asset-tool') // IMPORTANT: If using this as a template, uncomment this
 
 const income = Asset.TYPE.INCOME
 const expense = Asset.TYPE.EXPENSE
@@ -18,9 +19,17 @@ const rent = 850
 Asset.construct(rent, expense, monthly, 'Rent').include()
 Asset.construct(20, expense, monthly, 'Renters Insurance').include()
 Asset.construct(40, expense, monthly, 'Apartment Fees').include()
-Asset.construct(40, expense, monthly, 'Water').include()
-Asset.construct(75, expense, monthly, 'Power').include()
-Asset.construct(65, expense, monthly, 'Internet').include()
+
+// Using default constructor
+new Asset(40, {
+  type: expense,
+  interval: monthly,
+  label: 'Water'
+}).include()
+
+// When a monthly expense, use the default constructor defaults
+new Asset(75, { label: 'Power' }).include()
+new Asset(65, { label: 'Internet' }).include()
 
 // Insurance
 Asset.construct(1426, expense, annual, 'Car Insurance Estimate').include()
