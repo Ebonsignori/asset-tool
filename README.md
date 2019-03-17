@@ -91,7 +91,7 @@ Asset.construct([65, 100], Asset.TYPE.EXPENSE, Asset.INT.MONTHLY, 'Internet').in
 
 You can run calculations and view the breakdown of all on your `include()`'d assets from:
 
-1. The command line
+1. The command line.
 2. A generated HTML or PDF file.
 
 To generate an html or pdf file at the end of your script include:
@@ -102,7 +102,7 @@ Asset.generateSummary()
 
 See [Generate Summary](#generate-summary) for an overview of generating a pdf or html.
 
-To print your totals for each interval (daily, monthly, annual) in the command line,at the end of your script include:
+To print your totals for each interval (daily, monthly, annual) in the command line, at the end of your script include:
 
 ```javascript
 Asset.printAll()
@@ -111,8 +111,8 @@ Asset.printAll()
 To print your totals and the breakdown for a specific interval, at the end of your script include:
 
 ```javascript
-
 Asset.printInterval(interval)
+
 // Example for monthly interval
 Asset.printInterval('monthly')
 ```
@@ -129,14 +129,14 @@ To generate a pdf you have the following options. The example shows the defaults
 opts = {
   generatePdf: false, // true or false (if any other pdf option is specified this defaults to true)
   orientation: "portrait", // portrait or landscape
-  format: "Tabloid", // A3, A4, A5, Legal, Letter, or Tabloid
+  format: "Letter", // A3, A4, A5, Legal, Letter, or Tabloid
   pdfName: "./summary.pdf" // Can be any file path string ending with .pdf
 }
 ```
 
 ### HTML options
 
-Additionally, you can specify the html file's path name.
+Additionally, you can specify the html file's path.
 
 ```javascript
 opts = {
@@ -146,12 +146,12 @@ opts = {
 
 ### Shared options
 
-For both html and pdf generations, the following options are available.
+For both html and pdf summaries, the following options are available.
 
 ```javascript
 opts = {
-  open: false, // Open the generated summary on success
-  noLogging: false // Don't log success message on summary creation
+  open: false, // Open a new tab in default browser or pdf viewer on success
+  noLogging: false // Don't log a success message upon summary creation
 }
 ```
 
