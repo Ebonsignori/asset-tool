@@ -1,5 +1,5 @@
 const Asset = require('.') // IMPORTANT: If using this as a template, comment this out
-// const Asset = require('Asset-tool') // IMPORTANT: If using this as a template, uncomment this
+// const Asset = require('asset-tool') // IMPORTANT: If using this as a template, uncomment this
 
 const income = Asset.TYPE.INCOME
 const expense = Asset.TYPE.EXPENSE
