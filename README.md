@@ -215,7 +215,6 @@ e.g. `Asset.INT.DAILY`.
 ## TODO
 
 - Add modifiers to certain types as specified in [Types of Assets](#types-of-assets)
-- Add automatic income tax adjustments using some sort of API?
 - Add tests and CI script to run those tests
 - Add quarterly intervals?
 - Make more robust / less hacky
