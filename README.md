@@ -1,6 +1,6 @@
 # Asset tool
 
-[![Build Status](https://travis-ci.com/Ebonsignori/asset-tool.svg?branch=master)](https://travis-ci.com/Ebonsignori/asset-tool)
+[![Build Status](https://travis-ci.org/Ebonsignori/asset-tool.svg?branch=master)](https://travis-ci.org/Ebonsignori/asset-tool)
 
 **NOTE:** Only USD currently supported
 
@@ -180,5 +180,6 @@ Asset.INT = {
 ## TODO
 
 - Add Investment and Savings `Asset.TYPE`. Default remaining to Savings?
+- Add automatic income tax adjustments using some sort of API?
 - Add tests and CI script to run those tests
 - Make more robust / less hacky
