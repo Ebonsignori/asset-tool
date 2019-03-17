@@ -9,13 +9,13 @@ script: npm run lint
 branches:
   only:
   - master
-deploy:
-  provider: npm
-  script: 
-    -npx semantic-release
-  email: evanabonsignori@gmail.com
-  api_key:
-    secure: i11SVsrzll/bUnWTHB5UDYU9nk/YNUWHhLt4yLwHyVd9/hmsfBkYtbu61ea+AHVZHex/R13NQSKi+Aq/EGmZcK1MiTQN1cgiHzYecSex0HOCTMXnzjnhnppolTwZ09jPjOyURDF3Bfzqj9/rh/VXXgyCPex3aXvxZdqRTPswyVUeYYcEIywCM7EtXQVNZEAteExIaDpquqDH28zepvGgtiX0Af4VqWrKwGWUCtJI9wLAN6tIjXkyYO2Qvejl6Mv3ELX6WsEfvL0/e2S8D9ycdDbScjhh1YAJP7oZx5vfVXr7a1hd00VithqvDGtNYHuv13o/pfEtQr38QrVR6kDXWAAXrGT+XZo/ntaNvtIFyU/5m0cxzOEeIG06zoPNXqiQUZGbzZrT+yckkd2cNgdjpPC47aTY7Je4o9XTUejPGsA3LRROUIWvkdcKAHbvHOurFvwQRwDvbdci0OZ7LnSy2DutgZbq9OFsoICDvj9OLf6TU14pvQdjV8Rfc6bzGn0SxQdzQZbwqz78ntXTQwQNz+OXibI6wpBuCZ4wVtJnel39R5PkC60wLKHN1dkwBS3B8ruGyDPXGRs3Awr10VkpUzkR40qqJ50BrTzIsRXENswXAUZ7vEKvQ8Lv3E9kdsmCDU/2JbH8VlbxRUPASPPYvDh42JG+PdvwvMPxBBSDrA8=
-  on:
-    tags: true
-    repo: Ebonsignori/asset-tool
+jobs:
+  include:
+    # Define the release stage that runs semantic-release
+    - stage: release
+      node_js: lts/*
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script:
+          - npx semantic-release
