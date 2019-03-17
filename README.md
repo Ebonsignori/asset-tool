@@ -1,12 +1,14 @@
 # Asset tool
 
+[![Build Status](https://travis-ci.com/Ebonsignori/asset-tool.svg?branch=master)](https://travis-ci.com/Ebonsignori/asset-tool)
+
 **NOTE:** Only USD currently supported
 
 This tool is geared for personal use and is not recommended / robust enough to be used in a production environment.
 
 The workflow for using this tool is as follows:
 
-1. Type out your income and expenses by interval (daily, monthly, annual) in a JavaScript file that imports this module.
+1. Type out your income and expenses by interval (daily, monthly, annual) in a Node.js script that imports this module.
 2. Run the file to calculate your total earnings and expenses per each interval.
 3. Save the summary of the calculations to a pdf or html file, or simply print the summary to your console.
 
@@ -20,11 +22,11 @@ The following is an image of the html summary generated from running [example.js
 
 ### Install
 
-`npm i -s Asset-tool`
+`npm i -s asset-tool`
 
 Import the module
 
-`const Asset = require('Asset-tool')`
+`const Asset = require('asset-tool')`
 
 ### QuickStart
 
@@ -177,5 +179,5 @@ Asset.INT = {
 
 ## TODO
 
-- Add tests
+- Add tests and CI script to run those tests
 - Make more robust / less hacky
