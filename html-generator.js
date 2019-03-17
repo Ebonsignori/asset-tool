@@ -5,95 +5,97 @@ const opn = require('opn')
 
 let htmlFileName = path.join(__dirname, '.', 'output.html')
 
-module.exports = (intervals, intervalIncomes, intervalCosts, intervalRemaining, perItemIntervalIncome, perItemIntervalCosts, upperCaseFirst, opts) => {
+module.exports = (Asset, intervalTotals, perItemIntervalAndType, opts) => {
   opts = opts || {}
 
   let html = `
-  <!DOCTYPE html>
-  <html lang="en">
-  
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Breakdown</title>
-    <meta name="description" content="Asset breakdown">
-    <meta name="author" content="Evan Bonsignori">
-    <style>${customStyles()}</style>
-    <style>${bootstrapStyles()}</style>
-  </head>
-  
-  <body>
-    <div class="container-fluid" style="padding: 25px">
-      <div class="row">`
+            <!DOCTYPE html>
+            <html lang="en">
+            
+            <head>
+              <meta charset="utf-8">
+              <meta http-equiv="X-UA-Compatible" content="IE=edge">
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <title>Breakdown</title>
+              <meta name="description" content="Asset breakdown">
+              <meta name="author" content="Evan Bonsignori">
+              <style>${customStyles()}</style>
+              <style>${bootstrapStyles()}</style>
+            </head>
+            
+            <body>
+              <div class="container-fluid" style="padding: 25px">
+                <div class="row">`
 
-  for (const interval of intervals) {
-    const upperInterval = upperCaseFirst(interval)
+  // Display each interval in a new column
+  for (const interval of Object.values(Asset.INT)) {
+    const upperInterval = Asset.upperCaseFirst(interval)
     html += `
-        <div class="col-md-4" style="padding: 25px">
-          <h2>
-            ${upperInterval}
-          </h2>
-          <p>
-            Assets for the ${upperInterval} interval.
-          </p>
-          <br />
-          <h4>Totals</h4>
-          <div class="list-group">
-            <div href="#" class="list-group-item justify-content-between gain">Income
-              <span class="badge badge-gain">${intervalIncomes[interval].format()}</span>
-            </div>
-            <div href="#" class="list-group-item justify-content-between loss">Expenses
-              <span class="badge badge-loss">${intervalCosts[interval].format()}</span>
-            </div>
-            <div href="#" class="list-group-item justify-content-between remaining">Remaining
-              <span class="badge badge-remaining">${intervalRemaining[interval].format()}</span>
-            </div>
-          </div>
-          <br />
-          <h4>Breakdown</h4>
-          <p>Income</p>
-          <div class="list-group">
-          `
-    if (perItemIntervalIncome[interval]) {
-      for (const item of perItemIntervalIncome[interval]) {
-        html +=
-          `
-              <div href="#" class="list-group-item justify-content-between ${item.type}">${item.label}
-                <span class="badge badge-${item.type}">${item.format()}</span>
-              </div>
+            <div class="col-md-4" style="padding: 25px">
+              <h2>
+                ${upperInterval}
+              </h2>
+              <p>
+                Assets for the ${upperInterval} interval.
+              </p>
+              <br />
+              <h4>Totals</h4>
+              <div class="list-group">
             `
+
+    // Display totals for each type
+    for (const type of Object.values(Asset.TYPE)) {
+      if (intervalTotals[interval][type]) {
+        html += `
+              <div href="#" class="list-group-item justify-content-between total-${type}">${intervalTotals[interval][type].label}
+                <span class="badge badge-total-${type}">${intervalTotals[interval][type].format()}</span>
+              </div>
+              `
       }
     }
+
+    // Close list group
     html += `
-          </div>
-          <br />
-          <p>Expenses</p>
-          <div class="list-group">
-          `
-    if (perItemIntervalCosts[interval]) {
-      for (const item of perItemIntervalCosts[interval]) {
-        html +=
-          `
-              <div href="#" class="list-group-item justify-content-between ${item.type}">${item.label}
-                <span class="badge badge-${item.type}">${item.format()}</span>
-              </div>
+            </div>
+            <br />
+            <h4>Breakdown</h4>
             `
+
+    // Display breakdown for each type
+    for (const type of Object.values(Asset.TYPE)) {
+      if (perItemIntervalAndType[interval][type]) {
+        html += `
+              <br />
+              <p>${perItemIntervalAndType[interval][type].label}</p>
+              <div class="list-group">
+              `
+        if (perItemIntervalAndType[interval][type].length > 0) {
+          for (const item of perItemIntervalAndType[interval][type]) {
+            html += `
+                <div href="#" class="list-group-item justify-content-between ${item.type}">${item.label}
+                  <span class="badge badge-${item.type}">${item.format()}</span>
+                </div>
+                `
+          }
+        } else {
+          html += `<div href="#" class="list-group-item justify-content-between">None Included <span class="badge badge-none">$0.00</span></div>`
+        }
+        // Close Each Breakdown List Group
+        html += `</div>`
       }
     }
-    html += `
-          </div>
-        </div>
-    `
+
+    // Close interval column
+    html += `</div>`
   }
 
+  // Close row, container, and body
   html += `
+        </div>
       </div>
-    </div>
-  </body>
-  
-  </html>
-  `
+    </body>
+    </html>
+    `
 
   const generatePdf = opts.pdfName || opts.generatePdf || opts.orientation || opts.format
 

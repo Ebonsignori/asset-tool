@@ -2,6 +2,8 @@ const Asset = require('.') // IMPORTANT: If using this as a template, comment th
 // const Asset = require('asset-tool') // IMPORTANT: If using this as a template, uncomment this
 
 const income = Asset.TYPE.INCOME
+const investment = Asset.TYPE.INVESTMENT
+const saving = Asset.TYPE.SAVING
 const expense = Asset.TYPE.EXPENSE
 
 const daily = Asset.INT.DAILY
@@ -11,6 +13,13 @@ const annual = Asset.INT.ANNUAL
 /* ------------------- Income ------------------- */
 Asset.construct(1000 * 2, income, monthly, 'My Company Name').include()
 Asset.construct(200, income, monthly, 'Side Gig').include()
+
+/* ------------------- Investments ------------------- */
+Asset.construct(3000, investment, annual, 'Annual Investment income').include()
+
+/* ------------------- Savings ------------------- */
+Asset.construct(250, saving, monthly, 'Emergency Fund').include()
+Asset.construct(10, saving, daily, 'New House Fund').include()
 
 /* ------------------- Expenses ------------------- */
 const rent = 850

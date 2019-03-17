@@ -69,9 +69,9 @@ Asset.construct(1999, Asset.TYPE.EXPENSE, Asset.INT.MONTHLY, '3 payments of', tr
 - `amount`: A number value in dollars of the amount of the asset.
   - Can be an array of numbers that will be averaged. (e.g. `[200, 400]` will be averaged to `300`)
   - Always Required
-- `type`: Can be a value from `Asset.TYPE` (see [Static Values](#static-values))
+- `type`: Can be a value from `Asset.TYPE` (see [Types of Assets](#types-of-assets))
   - Optional. Defaults to `Asset.TYPE.EXPENSE`
-- `interval`: Can be a value from `Asset.INT` (see [Static Values](#static-values))
+- `interval`: Can be a value from `Asset.INT` (see [Available Intervals](#available-intervals))
   - Optional. Defaults to `Asset.INT.MONTHLY`
 - `label`: A string identifying the asset (e.g. 'Rent')
   - Optional. Defaults to `Unlabelled`
@@ -120,6 +120,8 @@ Asset.printInterval('monthly')
 
 ## Generate Summary
 
+A `summary` contains your totals by interval and the breakdowns that compose those totals.
+
 By default, `Asset.generateSummary()` will generate an HTML file called `summary.html` in the directory that the script is run.
 
 ### PDF options
@@ -160,15 +162,45 @@ opts = {
 Asset.generateSummary(opts)
 ```
 
-## Static Values
+## Types of Assets
+
+An asset can be one of the following types,
+
+1. `income`: Amount gained from employment(s) **(net positive)**
+2. `investment`: Amount gained from investment(s) **(net positive)**
+3. `saving`: Amount saved **(net negative)**
+4. `expense`: Amount spent **(net negative)**
+
+and can programmatically be accessed using the following static properties:
 
 ```javascript
 Asset.TYPE = {
   INCOME: 'income',
-  EXPENSE: 'expense',
-  TOTAL: 'total'
+  INVESTMENT: 'investment',
+  SAVING: 'saving',
+  EXPENSE: 'expense'
 }
 ```
+
+e.g. `Asset.TYPE.INCOME`.
+
+Types are currently only used for grouping in the `summary`'s financial breakdown.
+
+Future plans will allow types to have properties attached to them, for instance,
+
+- A `saving` could accept a percent return for an interval.
+- An `investment` could accept the amount invested (net negative) and projected rates of return (net positive0).
+- An `income` could accept total tax percentages.
+
+## Available Intervals
+
+An interval can be one of the following,
+
+1. `daily`
+2. `monthly`
+3. `annual`
+
+and can programmatically be accessed using the following static properties:
 
 ```javascript
 Asset.INT = {
@@ -178,9 +210,12 @@ Asset.INT = {
 }
 ```
 
+e.g. `Asset.INT.DAILY`.
+
 ## TODO
 
-- Add Investment and Savings `Asset.TYPE`. Default remaining to Savings?
+- Add modifiers to certain types as specified in [Types of Assets](#types-of-assets)
 - Add automatic income tax adjustments using some sort of API?
 - Add tests and CI script to run those tests
+- Add quarterly intervals?
 - Make more robust / less hacky

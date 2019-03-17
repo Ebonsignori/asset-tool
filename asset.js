@@ -82,20 +82,33 @@ class Asset {
     return amount.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })
   }
 
-  print (gain) {
+  print () {
     if (this.type === Asset.TYPE.EXPENSE) {
       console.log(this.label + ': ' + chalk.red.bold(this.format()))
     }
     if (this.type === Asset.TYPE.INCOME) {
       console.log(this.label + ': ' + chalk.green.bold(this.format()))
     }
+    if (this.type === Asset.TYPE.SAVING) {
+      console.log(this.label + ': ' + chalk.keyword('orange').bold(this.format()))
+    }
+    if (this.type === Asset.TYPE.INVESTMENT) {
+      console.log(this.label + ': ' + chalk.greenBright.bold(this.format()))
+    }
     if (this.type === Asset.TYPE.TOTAL) {
-      if (typeof gain === 'undefined') {
-        console.log(this.label + ': ' + chalk.black.bgYellow(this.format()))
-      } else if (gain) {
-        console.log(this.label + ': ' + chalk.black.bgGreen.bold(this.format()))
+      const label = this.label.toLowerCase()
+      if (label.includes('income')) {
+        console.log(this.label + ': ' + chalk.green.bgBlack.bold(this.format()))
+      } else if (label.includes('expense')) {
+        console.log(this.label + ': ' + chalk.red.bgBlack.bold(this.format()))
+      } else if (label.includes('remaining')) {
+        console.log(this.label + ': ' + chalk.yellow.bgBlack.bold(this.format()))
+      } else if (label.includes('saving')) {
+        console.log(this.label + ': ' + chalk.keyword('orange').bgBlack.bold(this.format()))
+      } else if (label.includes('investment')) {
+        console.log(this.label + ': ' + chalk.greenBright.bgBlack.bold(this.format()))
       } else {
-        console.log(this.label + ': ' + chalk.bgRed.bold(this.format()))
+        console.log(this.label + ': ' + chalk.bold(this.format()))
       }
     }
   }
@@ -227,9 +240,12 @@ Asset.construct = (amount, type, interval, label, isCents) => {
 }
 
 Asset.TYPE = {
+  TOTAL: 'total',
   INCOME: 'income',
+  INVESTMENT: 'investment',
   EXPENSE: 'expense',
-  TOTAL: 'total'
+  SAVING: 'saving',
+  REMAINING: 'remaining'
 }
 Asset.INT = {
   DAILY: 'daily',
@@ -252,59 +268,104 @@ const monthly = Asset.INT.MONTHLY
 const annual = Asset.INT.ANNUAL
 
 const daysInYear = 365
-Asset.printAll = (everything) => {
+
+Asset.generateSummary = (opts, everything) => {
+  if (everything && !Array.isArray(everything)) throw TypeError('Must include an array of Assets.')
   if (!everything) everything = includedAssets
 
-  const [ intervalIncomes, intervalCosts, intervalRemaining ] = Asset.getTotals(everything)
+  const [ intervalTotals, perItemIntervalAndType ] = getTotals(everything)
+
+  generateHTML(Asset, intervalTotals, perItemIntervalAndType, opts)
+}
+
+Asset.printInterval = (interval, everything) => {
+  if (everything && !Array.isArray(everything)) throw TypeError('Must include an array of Assets.')
+  if (!everything) everything = includedAssets
+  if (!interval) throw TypeError('Must specify an interval.')
+
+  const [ intervalTotals, perItemIntervalAndType ] = getTotals(everything)
+
+  console.log(chalk.blue.bold(`${upperCaseFirst(interval)} Totals: `))
+
+  // Print totals for interval
+  for (const type of Object.values(Asset.TYPE)) {
+   if (intervalTotals[interval][type]) intervalTotals[interval][type].print()
+  }
+
+  console.log(' ')
+  console.log(chalk.blue.bold(`${upperCaseFirst(interval)} Breakdown: `))
+
+  // Print breakdown for interval
+  for (const type of Object.values(Asset.TYPE)) {
+    if (perItemIntervalAndType[interval][type]) {
+      console.log(chalk.blue(perItemIntervalAndType[interval][type].label))
+      if (perItemIntervalAndType[interval][type].length > 0) {
+        for (const item of perItemIntervalAndType[interval][type]) {
+          item.print()
+        }
+      } else {
+        console.log(chalk.red('None'))
+      }
+    } 
+  }
+}
+
+Asset.printAll = (everything) => {
+  if (everything && !Array.isArray(everything)) throw TypeError('Must include an array of Assets.')
+  if (!everything) everything = includedAssets
 
   for (const interval of Object.values(Asset.INT)) {
-    console.log(chalk.blue.bold(`${upperCaseFirst(interval)} assets:`))
-    intervalIncomes[interval].print(true)
-    intervalCosts[interval].print(false)
-    intervalRemaining[interval].print()
+    Asset.printInterval(interval, everything) 
     console.log('') // newline
   }
 }
 
-Asset.generateSummary = (opts, everything) => {
+/* ------------------- Print method helpers  -------------------*/
+function getTotals (everything) {
+  if (everything && !Array.isArray(everything)) throw TypeError('Must include an array of Assets.')
   if (!everything) everything = includedAssets
 
-  const [ intervalIncomes, intervalCosts, intervalRemaining, perItemIntervalIncome, perItemIntervalCosts ] = Asset.getTotals(everything)
-
-  generateHTML(Object.values(Asset.INT), intervalIncomes, intervalCosts, intervalRemaining, perItemIntervalIncome, perItemIntervalCosts, upperCaseFirst, opts)
-}
-
-Asset.getTotals = (everything) => {
-  if (!everything) everything = includedAssets
-  if (!Array.isArray(everything)) throw TypeError('Must include an array of Assets')
-
-  let intervalIncomes = {}
-  let intervalCosts = {}
-  let intervalRemaining = {}
-
-  let perItemIntervalIncome = {}
-  let perItemIntervalCosts = {}
+  const intervalTotals = {}
+  const perItemIntervalAndType = {}
+  initTotalsAndItemBreakdownObjects (intervalTotals, perItemIntervalAndType)
 
   for (const interval of Object.values(Asset.INT)) {
-    const [ totalIncome, totalCost, totalRemaining ] = totalsOverInterval(interval, everything, perItemIntervalIncome, perItemIntervalCosts)
-    intervalIncomes[interval] = totalIncome
-    intervalCosts[interval] = totalCost
-    intervalRemaining[interval] = totalRemaining
-
-    // Sort costs and incomes in order of amounts
-    perItemIntervalIncome[interval] && perItemIntervalIncome[interval].sort((a, b) => b.amount - a.amount)
-    perItemIntervalCosts[interval] && perItemIntervalCosts[interval].sort((a, b) => b.amount - a.amount)
+    totalsOverInterval(interval, everything, intervalTotals, perItemIntervalAndType)
   }
 
-  return [ intervalIncomes, intervalCosts, intervalRemaining, perItemIntervalIncome, perItemIntervalCosts ]
+   // Sort arrays of items in order of amounts
+   for (const interval of Object.values(Asset.INT)) {
+    for (const type of Object.values(Asset.TYPE)) {
+      if (perItemIntervalAndType[interval][type]) perItemIntervalAndType[interval][type].sort((a, b) => b.amount - a.amount)
+    }
+  }
+
+  return [ intervalTotals, perItemIntervalAndType ]
+}
+
+function initTotalsAndItemBreakdownObjects (intervalTotals, perItemIntervalAndType) {
+  for (const interval of Object.values(Asset.INT)) {
+    intervalTotals[interval] = {}
+    for (const type of Object.values(Asset.TYPE)) {
+      if (type === Asset.TYPE.TOTAL) continue
+      intervalTotals[interval][type] = Asset.construct(0, total, interval, `Total ${upperCaseFirst(type)}`)
+    }
+  }
+
+  for (const interval of Object.values(Asset.INT)) {
+    perItemIntervalAndType[interval] = {}
+    for (const type of Object.values(Asset.TYPE)) {
+      if (type === Asset.TYPE.TOTAL) continue
+      if (type === Asset.TYPE.REMAINING) continue
+      perItemIntervalAndType[interval][type] = []
+      perItemIntervalAndType[interval][type].label =  `${upperCaseFirst(type)}s`
+    }
+  }
 }
 
 // Calculate everything for interval
-function totalsOverInterval (interval, everything, perItemIntervalIncome, perItemIntervalCosts) {
+function totalsOverInterval (interval, everything, intervalTotals, perItemIntervalAndType) {
   if (!everything) everything = includedAssets
-
-  let totalIncome = Asset.construct(0, total, interval, 'Total Income')
-  let totalCosts = Asset.construct(0, total, interval, 'Total Costs')
 
   for (let staticItem of everything) {
     const item = Asset.clone(staticItem, true, staticItem.label)
@@ -324,59 +385,15 @@ function totalsOverInterval (interval, everything, perItemIntervalIncome, perIte
       else if (item.interval === annual) intervalItem = item
     }
 
-    if (intervalItem.isIncome()) {
-      totalIncome = totalIncome.thisAdd(intervalItem)
-      if (!perItemIntervalIncome[interval]) perItemIntervalIncome[interval] = []
-      perItemIntervalIncome[interval].push(intervalItem)
-    }
-    if (intervalItem.isExpense()) {
-      totalCosts = totalCosts.thisAdd(intervalItem)
-      if (!perItemIntervalCosts[interval]) perItemIntervalCosts[interval] = []
-      perItemIntervalCosts[interval].push(intervalItem)
-    }
+    intervalTotals[interval][intervalItem.type].thisAdd(intervalItem)
+    perItemIntervalAndType[interval][intervalItem.type].push(intervalItem)
   }
 
-  return [totalIncome, totalCosts, totalIncome.minus(totalCosts).setLabel('Total Remaining'), perItemIntervalCosts, perItemIntervalIncome]
-}
-
-Asset.printInterval = function everything (interval, everything) {
-  if (!everything) everything = includedAssets
-  if (!Array.isArray(everything)) throw TypeError('Must include an array of Assets')
-  if (!interval) throw TypeError('Must specify interval')
-
-  let perItemIntervalIncome = {}
-  let perItemIntervalCosts = {}
-
-  console.log(chalk.blue.bold(`${upperCaseFirst(interval)} Totals: `))
-
-  // Calculate everything
-  const [ totalIncome, totalCost, totalRemaining ] = totalsOverInterval(interval, everything, perItemIntervalIncome, perItemIntervalCosts)
-
-  // Sort costs and incomes in order of amounts
-  perItemIntervalIncome[interval] && perItemIntervalIncome[interval].sort((a, b) => b.amount - a.amount)
-  perItemIntervalCosts[interval] && perItemIntervalCosts[interval].sort((a, b) => b.amount - a.amount)
-
-  // Print totals
-  totalIncome.print(true)
-  totalCost.print(false)
-  totalRemaining.print()
-  console.log(' ')
-
-  // Print breakdown
-  console.log(chalk.blue.bold(`${upperCaseFirst(interval)} Breakdown: `))
-  console.log(chalk.blue(`${upperCaseFirst(interval)} Income`))
-  if (perItemIntervalIncome[interval]) {
-    for (const item of perItemIntervalIncome[interval]) {
-      item.print()
-    }
-  }
-  console.log(' ')
-  console.log(chalk.blue(`${upperCaseFirst(interval)} Expenses`))
-  if (perItemIntervalCosts[interval]) {
-    for (const item of perItemIntervalCosts[interval]) {
-      item.print()
-    }
-  }
+  intervalTotals[interval][Asset.TYPE.REMAINING]
+  .thisPlus(intervalTotals[interval][Asset.TYPE.INCOME])
+  .thisPlus(intervalTotals[interval][Asset.TYPE.INVESTMENT])
+  .thisMinus(intervalTotals[interval][Asset.TYPE.EXPENSE])
+  .thisMinus(intervalTotals[interval][Asset.TYPE.SAVING])
 }
 
 module.exports = Asset
