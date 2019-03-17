@@ -289,7 +289,7 @@ Asset.printInterval = (interval, everything) => {
 
   // Print totals for interval
   for (const type of Object.values(Asset.TYPE)) {
-   if (intervalTotals[interval][type]) intervalTotals[interval][type].print()
+    if (intervalTotals[interval][type]) intervalTotals[interval][type].print()
   }
 
   console.log(' ')
@@ -306,7 +306,7 @@ Asset.printInterval = (interval, everything) => {
       } else {
         console.log(chalk.red('None'))
       }
-    } 
+    }
   }
 }
 
@@ -315,26 +315,26 @@ Asset.printAll = (everything) => {
   if (!everything) everything = includedAssets
 
   for (const interval of Object.values(Asset.INT)) {
-    Asset.printInterval(interval, everything) 
+    Asset.printInterval(interval, everything)
     console.log('') // newline
   }
 }
 
-/* ------------------- Print method helpers  -------------------*/
+/* ------------------- Print method helpers  ------------------- */
 function getTotals (everything) {
   if (everything && !Array.isArray(everything)) throw TypeError('Must include an array of Assets.')
   if (!everything) everything = includedAssets
 
   const intervalTotals = {}
   const perItemIntervalAndType = {}
-  initTotalsAndItemBreakdownObjects (intervalTotals, perItemIntervalAndType)
+  initTotalsAndItemBreakdownObjects(intervalTotals, perItemIntervalAndType)
 
   for (const interval of Object.values(Asset.INT)) {
     totalsOverInterval(interval, everything, intervalTotals, perItemIntervalAndType)
   }
 
-   // Sort arrays of items in order of amounts
-   for (const interval of Object.values(Asset.INT)) {
+  // Sort arrays of items in order of amounts
+  for (const interval of Object.values(Asset.INT)) {
     for (const type of Object.values(Asset.TYPE)) {
       if (perItemIntervalAndType[interval][type]) perItemIntervalAndType[interval][type].sort((a, b) => b.amount - a.amount)
     }
@@ -358,7 +358,7 @@ function initTotalsAndItemBreakdownObjects (intervalTotals, perItemIntervalAndTy
       if (type === Asset.TYPE.TOTAL) continue
       if (type === Asset.TYPE.REMAINING) continue
       perItemIntervalAndType[interval][type] = []
-      perItemIntervalAndType[interval][type].label =  `${upperCaseFirst(type)}s`
+      perItemIntervalAndType[interval][type].label = `${upperCaseFirst(type)}s`
     }
   }
 }
@@ -390,10 +390,10 @@ function totalsOverInterval (interval, everything, intervalTotals, perItemInterv
   }
 
   intervalTotals[interval][Asset.TYPE.REMAINING]
-  .thisPlus(intervalTotals[interval][Asset.TYPE.INCOME])
-  .thisPlus(intervalTotals[interval][Asset.TYPE.INVESTMENT])
-  .thisMinus(intervalTotals[interval][Asset.TYPE.EXPENSE])
-  .thisMinus(intervalTotals[interval][Asset.TYPE.SAVING])
+    .thisPlus(intervalTotals[interval][Asset.TYPE.INCOME])
+    .thisPlus(intervalTotals[interval][Asset.TYPE.INVESTMENT])
+    .thisMinus(intervalTotals[interval][Asset.TYPE.EXPENSE])
+    .thisMinus(intervalTotals[interval][Asset.TYPE.SAVING])
 }
 
 module.exports = Asset
