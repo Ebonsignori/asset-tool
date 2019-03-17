@@ -218,3 +218,4 @@ e.g. `Asset.INT.DAILY`.
 - Add tests and CI script to run those tests
 - Add quarterly intervals?
 - Make more robust / less hacky
+
