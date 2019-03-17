@@ -179,5 +179,6 @@ Asset.INT = {
 
 ## TODO
 
+- Add Investment and Savings `Asset.TYPE`. Default remaining to Savings?
 - Add tests and CI script to run those tests
 - Make more robust / less hacky
