@@ -1,6 +1,6 @@
 {
   "name": "asset-tool",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Tool to help calculate and view a breakdown of daily, monthly, and annual finances.",
   "main": "asset.js",
   "scripts": {
