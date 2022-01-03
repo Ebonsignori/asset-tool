@@ -1,14 +1,15 @@
 {
   "name": "asset-tool",
-  "version": "1.1.0",
+  "version": "1.0.1",
   "description": "Tool to help calculate and view a breakdown of daily, monthly, and annual finances.",
   "main": "asset.js",
   "scripts": {
     "start": "node ./example.js",
     "lint": "standard",
-    "patch-release": "npm version patch && npm publish && git push --follow-tags",
-    "minor-release": "npm version minor && npm publish && git push --follow-tags",
-    "major-release": "npm version major && npm publish && git push --follow-tags"
+    "patch-release": "npm run update-changelog && npm version patch && npm publish && git push --follow-tags",
+    "minor-release": "npm run update-changelog && npm version minor && npm publish && git push --follow-tags",
+    "major-release": "npm run update-changelog && npm version major && npm publish && git push --follow-tags",
+    "update-changelog": "node ./changelog.js"
   },
   "author": "Evan Bonsignori",
   "license": "ISC",
@@ -19,6 +20,7 @@
     "open": "^8.4.0"
   },
   "devDependencies": {
+    "keep-a-changelog": "^2.0.0",
     "standard": "^12.0.1"
   },
   "repository": {
