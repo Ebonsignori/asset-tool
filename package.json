@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node ./example.js",
     "lint": "standard",
-    "semantic-release": "semantic-release"
+    "patch-release": "npm version patch && npm publish && git push --follow-tags",
+    "minor-release": "npm version minor && npm publish && git push --follow-tags",
+    "major-release": "npm version major && npm publish && git push --follow-tags"
   },
   "author": "Evan Bonsignori",
   "license": "ISC",
@@ -17,7 +19,6 @@
     "open": "^8.4.0"
   },
   "devDependencies": {
-    "semantic-release": "^15.13.3",
     "standard": "^12.0.1"
   },
   "repository": {
