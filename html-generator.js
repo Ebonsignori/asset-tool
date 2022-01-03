@@ -1,7 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 const pdf = require('html-pdf')
-const opn = require('opn')
+const betterOpn = require("better-opn")
+const open = require('open')
 
 let htmlFileName = path.join(__dirname, '.', 'output.html')
 
@@ -115,7 +116,7 @@ module.exports = (Asset, intervalTotals, perItemIntervalAndType, opts) => {
           console.log(`Your PDF summary has been generated: ${chosenPdfName}`)
         }
         if (opts.open) {
-          opn(chosenPdfName, { wait: false })
+          open(chosenPdfName, { wait: true, newInstance: false })
         }
       })
     } else {
@@ -123,7 +124,7 @@ module.exports = (Asset, intervalTotals, perItemIntervalAndType, opts) => {
         console.log(`Your HTML summary has been generated: ${htmlFileName}`)
       }
       if (opts.open) {
-        opn(htmlFileName, { wait: false })
+        betterOpn(`file://${path.resolve(htmlFileName)}`)
       }
     }
   })
